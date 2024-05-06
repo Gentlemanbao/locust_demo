@@ -16,7 +16,7 @@ from sqlalchemy.sql import events
 """
 import os
 
-from locust import HttpUser, task, between, events
+from locust import HttpUser, task, between, events, SequentialTaskSet
 
 from gevent._semaphore import Semaphore
 
@@ -35,7 +35,7 @@ def on_math_complete(**kwargs):
 # 挂在到locust钩子函数（所有的Locust示例产生完成时触发）
 events.spawning_complete.add_listener(on_math_complete)
 num=0
-class MyUser(HttpUser):
+class MyUser(SequentialTaskSet):
     #    wait_time = between(5, 15)
 
     @task
@@ -49,5 +49,15 @@ class MyUser(HttpUser):
         # all_semaphore.wait()
         self.client.get("https://www.baidu.com/s?wd=locust%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%90%E8%A1%8C&pn=10&oq=locust%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%90%E8%A1%8C&tn=baiduhome_pg&ie=utf-8&rsv_idx=2&rsv_pq=e964452e00007678&rsv_t=c65eZbjPDSxQPSk8rZOC%2F6Sco62JP%2F1NcJtWX53z59cLcZEvbVQKNvG97j1NpOouJyez")
 
+
+class WebSitUser(HttpUser):  # 定义用户，相当于一个线程组
+    wait_time = between(1, 3)  # 意思是每个用户执行任务的时候随机等待1-3秒的随机时间
+    tasks = [MyUser]
+    min_wait = 3000
+    max_wait = 6000
+
 # if __name__ == '__main__':
 #     os.system("locust -f demo_test.py --host=https://www.baidu.com --headless -u 20 -r 2 -t 30s --html=./report/report.html")
+
+    # "locust -f demo_分布式.py --master --host=https://www.baidu.com --headless -u 20 -r 2 -t 60s --html=/root/apache-tomcat-9.0.88/webapps/test/report.html" 现在主机上执行这个命令
+    # " locust -f .\demo_分布式.py --worker --master-host=121.40.158.77" 然后在从机地方执行这个脚本
