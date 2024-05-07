@@ -55,7 +55,7 @@ class TestUser(TaskSet):
 
 
 # 测试配置
-class WebSitUser(HttpUser):  # 定义用户，相当于一个线程组3
+class WebSitUser(HttpUser):  # 定义用户，相当于一个线程组34
     wait_time = between(1, 3)
     tasks = [TestUser]
     min_wait = 3000
