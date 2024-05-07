@@ -55,12 +55,12 @@ class TestUser(TaskSet):
 
 
 # 测试配置
-class WebSitUser(HttpUser):  # 定义用户，相当于一个线程组
+class WebSitUser(HttpUser):  # 定义用户，相当于一个线程组12313
     wait_time = between(1, 3)
     tasks = [TestUser]
     min_wait = 3000
     max_wait = 6000
 
 
-# if __name__ == '__main__':
-#     os.system("locust -f demo2.py --host=http://192.168.10.137")
+if __name__ == '__main__':
+    os.system("locust -f demo2.py --host=http://192.168.10.137")
